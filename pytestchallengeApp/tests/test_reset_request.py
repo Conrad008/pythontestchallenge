@@ -17,3 +17,4 @@ def test_existing_user_can_request_password_reset(client):
     )
 
     assert response.status_code == 200
+    assert b"Password reset email sent" in response.content
