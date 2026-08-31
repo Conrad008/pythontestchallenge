@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -12,37 +11,41 @@
     <title>
         Password Reset
     </title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
+<body class="bg-sky-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 border border-sky-100">
+        <div class="text-center mb-6">  
+             <h1 class="text-2xl font-bold text-slate-800">
+                Reset your password
+            </h1>
+            
+            <p class="text-sm text-slate-500 mt-2">
+                Enter the email connected to your account.
+            </p>
+        </div>
+        
+        {% if message %}
+        
+        <div class="mb-4 p-3 rounded-lg bg-sky-50 border border-sky-200 text-sky-700 text-sm">
+          {{ message }}
+        </div>
+        {% endif %}
+        
+        <form method="POST" class="space-y-4 [&>p]:mb-4 [&>p>label]:block [&>p>label]:text-sm [&>p>label]:font-medium [&>p>label]:text-slate-700 [&>p>label]:mb-1 [&>p>input]:w-full [&>p>input]:px-3 [&>p>input]:py-2 [&>p>input]:border [&>p>input]:border-slate-300 [&>p>input]:rounded-lg [&>p>input]:focus:outline-none [&>p>input]:focus:ring-2 [&>p>input]:focus:ring-sky-400 [&>p>input]:focus:border-sky-400">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <button type="submit" 
+            class="w-full py-2.5 px-4 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2">
+              Send reset link
+            </button>
+    
+        </form>
 
-    <h1>
-        Reset your password
-    </h1>
-
-    <p>
-        Enter the email connected to your account.
-    </p>
-
-    {% if message %}
-
-        <p>
-            {{ message }}
-        </p>
-
-    {% endif %}
-
-    <form method="POST">
-
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <button type="submit">
-            Send reset link
-        </button>
-
-    </form>
+    </div>
 
 </body>
 
