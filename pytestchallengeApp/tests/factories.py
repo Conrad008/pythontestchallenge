@@ -1,6 +1,7 @@
 import factory
 from django.contrib.auth import get_user_model
 
+
 User = get_user_model()
 
 
@@ -16,6 +17,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         lambda user: f"{user.username}@example.com"
     )
 
-    password = factory.django.Password(
-        "Password123!"
+    password = factory.PostGenerationMethodCall(
+        "set_password",
+        "StrongPass123!"
     )
