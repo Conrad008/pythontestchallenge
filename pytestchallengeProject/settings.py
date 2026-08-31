@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'pytestchallangeProject.wsgi.application'
+WSGI_APPLICATION = 'pytestchallengeProject.wsgi.application'
 
 
 # Database
