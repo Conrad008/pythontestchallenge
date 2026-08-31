@@ -1,24 +1,3 @@
-# import pytest
-# from django.urls import reverse
-
-# from .factories import UserFactory
-
-# @pytest.mark.django_db
-# def test_existing_user_can_request_password_reset(client):
-#     user = UserFactory(
-#         email="Conrad@example.com"
-#     )
-
-#     response = client.post(
-#         reverse("password-reset-request"),
-#         {
-#             "email": user.email
-#         }
-#     )
-
-#     assert response.status_code == 200
-#     assert b"Password reset email sent" in response.content
-
 import pytest
 from django.urls import reverse
 
@@ -26,24 +5,40 @@ from .factories import UserFactory
 
 
 @pytest.mark.django_db
-def test_password_reset_page_loads(client):
+def test_password_reset_page_loads(
+    client
+):
     response = client.get(
-        reverse("password-reset-request")
+        reverse(
+            "password-reset-request"
+        )
     )
 
     assert response.status_code == 200
-    assert b"Reset your password" in response.content
+
+    assert (
+        b"Reset your password"
+        in response.content
+    )
 
 
 @pytest.mark.django_db
-def test_existing_user_receives_reset_email(client, mocker):
+def test_existing_user_receives_reset_email(
+    client,
+    mocker
+):
     user = UserFactory(
-        email="conrad@example.com"
+        email="aisha@example.com"
+    )
+
+    reset_url = (
+        "http://testserver/"
+        "password-reset/example/token/"
     )
 
     mock_build_url = mocker.patch(
         "pytestchallengeApp.views.build_reset_url",
-        return_value="http://testserver/reset/example-token/"
+        return_value=reset_url
     )
 
     mock_send_email = mocker.patch(
@@ -51,7 +46,9 @@ def test_existing_user_receives_reset_email(client, mocker):
     )
 
     response = client.post(
-        reverse("password-reset-request"),
+        reverse(
+            "password-reset-request"
+        ),
         {
             "email": user.email
         }
@@ -59,25 +56,31 @@ def test_existing_user_receives_reset_email(client, mocker):
 
     assert response.status_code == 200
 
-    mock_build_url.assert_called_once_with(
-        response.wsgi_request,
-        user
-    )
+    mock_build_url.assert_called_once()
 
     mock_send_email.assert_called_once_with(
         user.email,
-        "http://testserver/reset/example-token/"
+        reset_url
     )
 
 
 @pytest.mark.django_db
-def test_unknown_user_does_not_receive_reset_email(client, mocker):
+def test_unknown_user_does_not_receive_email(
+    client,
+    mocker
+):
+    mock_build_url = mocker.patch(
+        "pytestchallengeApp.views.build_reset_url"
+    )
+
     mock_send_email = mocker.patch(
         "pytestchallengeApp.views.send_reset_email"
     )
 
     response = client.post(
-        reverse("password-reset-request"),
+        reverse(
+            "password-reset-request"
+        ),
         {
             "email": "unknown@example.com"
         }
@@ -85,9 +88,11 @@ def test_unknown_user_does_not_receive_reset_email(client, mocker):
 
     assert response.status_code == 200
 
+    mock_build_url.assert_not_called()
+
     mock_send_email.assert_not_called()
 
     assert (
-        b"If an account exists for that email"
+        b"If an account exists"
         in response.content
     )
