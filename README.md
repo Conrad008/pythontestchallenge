@@ -9,7 +9,7 @@ The project was developed using a **test-first approach**, with tests driving th
 ---
 
 
-## 🎯 Project Goals
+## Project Goals
 
 The main goal of this project was to learn and practice:
 
