@@ -1,4 +1,4 @@
-# My TDD — Django Password Reset
+# Django Password Reset
 
 A Django password-reset application built as a practical project for learning **Test-Driven Development (TDD)** and automated testing with Python.
 
