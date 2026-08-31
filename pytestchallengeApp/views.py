@@ -1,5 +1,8 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import render
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 
 from .forms import PasswordResetRequestForm
 from .services import (
@@ -73,7 +76,47 @@ def password_reset_confirm(
     uidb64,
     token
 ):
+    try:
+        user_id = force_str(
+            urlsafe_base64_decode(
+                uidb64
+            )
+        )
+
+        user = User.objects.get(
+            pk=user_id
+        )
+
+    except (
+        TypeError,
+        ValueError,
+        OverflowError,
+        User.DoesNotExist,
+    ):
+        user = None
+
+    token_is_valid = (
+        user is not None
+        and default_token_generator.check_token(
+            user,
+            token
+        )
+    )
+
+    if not token_is_valid:
+        return render(
+            request,
+            "reset_password.html",
+            {
+                "token_valid": False
+            },
+            status=400,
+             )
+
     return render(
         request,
-        "reset_password.html"
+        "reset_password.html",
+        {
+            "token_valid": True
+        },
     )
